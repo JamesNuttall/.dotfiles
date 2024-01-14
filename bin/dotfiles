@@ -87,6 +87,15 @@ case "$OSTYPE" in
       task "Installing ansible"
       cmd "brew install ansible"
     fi
+
+    if ! dpkg -s python3 >/dev/null 2>&1; then
+      task "Installing python3"
+      cmd "brew install python3"
+    fi
+    if ! dpkg -s python3-pip >/dev/null 2>&1; then
+      task "Installing python3-pip"
+      cmd "brew install python3-pip"
+    fi
     ;;
   linux*)
     if ! dpkg -s "ansible" 1> /dev/null 2> /dev/null; then
@@ -96,6 +105,18 @@ case "$OSTYPE" in
       cmd "sudo apt-add-repository -y ppa:ansible/ansible"
       cmd "sudo apt-get update"
       cmd "sudo apt-get install -y ansible"
+      cmd "sudo apt-get install python3-argcomplete"
+      cmd "sudo activate-global-python-argcomplete3"
+    fi
+
+    if ! dpkg -s python3 >/dev/null 2>&1; then
+      task "Installing python3"
+      cmd "sudo apt-get install -y python3"
+    fi
+
+    if ! dpkg -s python3-pip >/dev/null 2>&1; then
+      task "Installing python3-pip"
+      cmd "sudo apt-get install -y python3-pip"
     fi
     ;;
   *)
@@ -103,4 +124,34 @@ case "$OSTYPE" in
     exit 1
     ;;
 esac
+
+if ! pip3 list | grep watchdog > /dev/null 2>&1; then
+  task "Installing watchdog"
+  cmd "pip3 install watchdog"
+fi
+
+if ! [[ -f "$SSH_DIR/authorized_keys" ]]; then
+  task "Generating SSH keys"
+  cmd "mkdir -p $SSH_DIR"
+  cmd "chmod 700 $SSH_DIR" 
+  
+  if ! [[ -f "$SSH_DIR/id_rsa" ]]; then
+    cmd "ssh-keygen -b 4096 -t rsa -f $SSH_DIR/id_rsa -N '' -C $USER@$HOSTNAME"
+  fi
+
+  cmd "cat $SSH_DIR/id_rsa.pub >> $SSH_DIR/authorized_keys"
+fi
+
+task "Updating dotfiles"
+cmd "git -C $DOTFILES_DIR pull --quiet"
+
+pushd "$DOTFILES_DIR" 2>&1 > /dev/null
+
+task "Updating galaxy"
+cmd "ansible-galaxy install -r requirements.yml"
+
+task "Running ansible playbook"
+ansible-playbook "$DOTFILES_DIR/main.yml" "$@"
+
+popd 2>&1 > /dev/null
 
