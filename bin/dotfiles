@@ -151,7 +151,11 @@ task "Updating galaxy"
 cmd "ansible-galaxy install -r requirements.yml"
 
 task "Running ansible playbook"
-ansible-playbook "$DOTFILES_DIR/main.yml" "$@"
+if [[ -f $VAULT_SECRET ]]; then
+    ansible-playbook --vault-password-file $VAULT_SECRET "$DOTFILES_DIR/main.yml" "$@"
+else
+    ansible-playbook "$DOTFILES_DIR/main.yml" "$@"
+fi
 
 popd 2>&1 > /dev/null
 
