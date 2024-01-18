@@ -1,0 +1,75 @@
+---
+- name: Zsh | Install Zsh
+  ansible.builtin.apt:
+    name: zsh
+    state: present
+  become: true
+
+- name: Zsh | Detect Oh My Zsh
+  stat:
+    path: "{{ ansible_user_dir }}/.oh-my-zsh"
+  register: ohmyzsh
+
+- name: Zsh | Register oh-my-zsh state
+  ansible.builtin.set_fact:
+    ohmyzsh_is_installed: "{{ ohmyzsh.stat.exists }}"
+
+- name: Zsh | Debug ohmyzsh_is_installed
+  ansible.builtin.debug:
+    var: ohmyzsh_is_installed
+
+- name: Zsh | Install oh-my-zsh
+  when: not ohmyzsh_is_installed
+  block:
+    - name: Zsh | Download oh-my-zsh Install Script
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+        dest: /{{ ansible_user_dir }}/oh-my-zsh.install.sh
+        force: true
+        mode: 755
+      notify:
+        - Zsh | Cleanup oh-my-zsh install script
+
+    - name: Zsh | Run the install script
+      ansible.builtin.script:
+        cmd: /{{ ansible_user_dir }}/oh-my-zsh.install.sh
+
+- name: Zsh | Copy .zshrc
+  ansible.builtin.copy:
+    src: .zshrc
+    dest: "{{ ansible_user_dir }}/.zshrc"
+    mode: 0644
+
+- name: Zsh | Detect powerlevel10k 
+  stat:
+    path: "{{ ansible_user_dir }}//.oh-my-zsh/custom/themes/powerlevel10k"
+  register: powerlevel10k
+
+- name: Zsh | Register powerlevel10k state
+  ansible.builtin.set_fact:
+    powerlevel10k_is_installed: "{{ powerlevel10k.stat.exists }}"
+
+- name: Zsh | Debug powerlevel10k_is_installed
+  ansible.builtin.debug:
+    var: powerlevel10k_is_installed
+
+- name: Zsh | Install powerlevel10k
+  when: not powerlevel10k_is_installed
+  block:
+    - name: Zsh | Download powerlevel10k
+      git:
+        repo: https://github.com/romkatv/powerlevel10k.git
+        depth: 1
+        dest: "{{ ansible_user_dir }}/.oh-my-zsh/custom/themes/powerlevel10k"
+
+- name: Zsh | Copy powerlevel10k config
+  ansible.builtin.copy:
+    src: .p10k.zsh 
+    dest: "{{ ansible_user_dir }}/.p10k.zsh"
+    mode: 0644
+
+- name: Zsh | Set default terminal
+  user:
+    name: "{{ host_user }}"
+    shell: /usr/bin/zsh
+  become: true
