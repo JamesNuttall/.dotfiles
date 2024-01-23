@@ -1,0 +1,21 @@
+---
+- name: SSH | Copy SSH keys
+  copy:
+    dest: "{{ ansible_user_dir }}/.ssh/{{ ssh_key_item.key }}"
+    content: "{{ ssh_key_item.value }}"
+    mode: 0600
+  no_log: true
+  loop_control:
+    loop_var: ssh_key_item
+  with_items: "{{ ssh_key | default({}) | dict2items }}"
+
+- name: SSH | Configure SSH config file
+  ansible.builtin.blockinfile:
+    path: "{{ ansible_user_dir }}/.ssh/config"
+    block: |
+      Host {{ item.split(':')[0] }}
+        HostName {{ item.split(':')[1] }}
+        User {{ item.split(':')[2] }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK FOR {{ item.split(':')[0] }}"
+    create: yes
+  with_items: "{{ ssh_hosts }}"  
