@@ -18,4 +18,5 @@
         User {{ item.split(':')[2] }}
     marker: "# {mark} ANSIBLE MANAGED BLOCK FOR {{ item.split(':')[0] }}"
     create: yes
-  with_items: "{{ ssh_hosts }}"  
+  no_log: true
+  with_items: "{{ ssh_hosts }}"
