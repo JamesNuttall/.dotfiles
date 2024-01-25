@@ -1,4 +1,5 @@
 # TODO
+    - Maybe we manage installing languages node/python etc
+
     - Darwin
-        - Some roles likely dont need OS specific yml
     - Run roles in specific order
