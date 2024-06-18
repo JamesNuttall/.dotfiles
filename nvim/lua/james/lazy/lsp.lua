@@ -11,6 +11,7 @@ return {
     'hrsh7th/nvim-cmp',
     'L3MON4D3/LuaSnip',
     'saadparwaiz1/cmp_luasnip',
+    'prettier/vim-prettier',
   },
 
   config = function()
@@ -69,5 +70,15 @@ return {
     vim.diagnostic.config({
       update_in_insert = true,
     })
+
+    vim.cmd([[
+      let g:prettier#autoformat = 1
+      let g:prettier#autoformat_require_pragma = 0
+      let g:prettier#exec_cmd_async = 1
+      augroup Prettier
+        autocmd!
+        autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.css,*.scss,*.json,*.graphql,*.md,*.vue PrettierAsync
+      augroup END
+    ]])
   end,
 }
