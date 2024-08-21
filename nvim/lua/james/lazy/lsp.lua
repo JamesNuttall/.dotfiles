@@ -77,7 +77,7 @@ return {
       let g:prettier#exec_cmd_async = 1
       augroup Prettier
         autocmd!
-        autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.css,*.scss,*.json,*.graphql,*.md,*.vue,*.php PrettierAsync
+        autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.css,*.scss,*.json,*.graphql,*.md,*.vue,*.php,*.twig PrettierAsync
       augroup END
     ]])
   end,
