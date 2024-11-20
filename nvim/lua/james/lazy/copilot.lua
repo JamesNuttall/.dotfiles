@@ -1,5 +1,5 @@
 return {
-  {
+  --[[ {
     "CopilotC-Nvim/CopilotChat.nvim",
     branch = "canary",
     dependencies = {
@@ -40,5 +40,5 @@ return {
         silent = true,
       },
     },
-  },
+  }, ]]
 }
