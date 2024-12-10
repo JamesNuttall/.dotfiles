@@ -17,7 +17,7 @@ return {
   config = function()
     require('mason').setup()
     require('mason-lspconfig').setup({
-      ensure_installed = { 'lua_ls', 'intelephense', 'tsserver', 'volar', 'emmet_ls', 'clangd', 'pyright', 'tailwindcss' },
+      ensure_installed = { 'lua_ls', 'intelephense', 'ts_ls', 'volar', 'emmet_ls', 'clangd', 'pyright', 'tailwindcss' },
 
       handlers = {
         function(server_name)
