@@ -32,8 +32,8 @@ vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><
 vim.keymap.set("n", "<leader>gs", "<cmd>vertical Git<CR>")
 vim.keymap.set("n", "<leader>gc", "<cmd>Telescope git_commits<CR>")
 vim.keymap.set("n", "<leader>gb", "<cmd>Telescope git_branches<CR>")
-vim.keymap.set("n", "<leader>gdh", "<cmd>diffget //2<CR>")
-vim.keymap.set("n", "<leader>gdl", "<cmd>diffget //3<CR>")
+vim.keymap.set("n", "<leader>dh", "<cmd>diffget //2<CR>")
+vim.keymap.set("n", "<leader>dl", "<cmd>diffget //3<CR>")
 
 --UNDOTREE
 vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
